@@ -38,6 +38,7 @@ class Board extends React.Component {
 
 function History(props) {
     const history = props.history;
+    const currentStepNumber = props.stepNumber;
     const moves = history.map((step, move) => {
       const desc = move ?
       'Go to move #' + move :
@@ -50,7 +51,12 @@ function History(props) {
 
       return (
         <li key={move}>
-          <button onClick={() => props.onClick(move)}>{desc}{latestMoveDesc}</button>
+          <button 
+            className={currentStepNumber === move ? 'current-step' : ''}
+            onClick={() => props.onClick(move)}
+          >
+            {desc}{latestMoveDesc}
+          </button>
         </li>
       )
     })
@@ -122,6 +128,7 @@ class Game extends React.Component {
           <History
             history={history}
             onClick={(i) => this.jumpTo(i)}
+            stepNumber={this.state.stepNumber}
           />
         </div>
       </div>
