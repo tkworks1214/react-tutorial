@@ -36,6 +36,31 @@ class Board extends React.Component {
   }
 }
 
+function History(props) {
+    const history = props.history;
+    const moves = history.map((step, move) => {
+      const desc = move ?
+      'Go to move #' + move :
+      'Go to game start'; 
+
+      const currentSquare = step.squares.slice();
+      const previousSquare = move ? history[move - 1].squares.slice() : null;
+      const latestMove = previousSquare ? currentSquare.findIndex((square, index) => square !== previousSquare[index]) : null;
+      const latestMoveDesc = latestMove != null ? ` [position : (${Math.floor(latestMove / 3) + 1}, ${latestMove % 3 + 1})]` : '';
+
+      return (
+        <li key={move}>
+          <button onClick={() => props.onClick(move)}>{desc}{latestMoveDesc}</button>
+        </li>
+      )
+    })
+    return (
+      <ol>
+        {moves}
+      </ol>
+    )
+}
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -76,22 +101,6 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
-    const moves = history.map((step, move) => {
-      const desc = move ?
-      'Go to move #' + move :
-      'Go to game start'; 
-
-      const currentSquare = step.squares.slice();
-      const previousSquare = move ? history[move - 1].squares.slice() : null;
-      const latestMove = previousSquare ? currentSquare.findIndex((square, index) => square !== previousSquare[index]) : null;
-      const latestMoveDesc = latestMove != null ? ` [position : (${Math.floor(latestMove / 3) + 1}, ${latestMove % 3 + 1})]` : '';
-
-      return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}{latestMoveDesc}</button>
-        </li>
-      )
-    })
 
     let status;
     if (winner) {
@@ -110,7 +119,10 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <History
+            history={history}
+            onClick={(i) => this.jumpTo(i)}
+          />
         </div>
       </div>
     );
