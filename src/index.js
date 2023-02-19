@@ -80,9 +80,15 @@ class Game extends React.Component {
       const desc = move ?
       'Go to move #' + move :
       'Go to game start'; 
+
+      const currentSquare = step.squares.slice();
+      const previousSquare = move ? history[move - 1].squares.slice() : null;
+      const latestMove = previousSquare ? currentSquare.findIndex((square, index) => square !== previousSquare[index]) : null;
+      const latestMoveDesc = latestMove != null ? ` [position : (${Math.floor(latestMove / 3) + 1}, ${latestMove % 3 + 1})]` : '';
+
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button onClick={() => this.jumpTo(move)}>{desc}{latestMoveDesc}</button>
         </li>
       )
     })
