@@ -7,6 +7,7 @@ function Square(props) {
       <button
         className="square"
         onClick={() => props.onClick()}
+        key={props.value}
       >
         {props.value}
       </button>
@@ -19,30 +20,23 @@ class Board extends React.Component {
       <Square
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
+        key={i}
       />
     );
   }
 
   render() {
-    return (
-      <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
+    console.log(this.props.squares);
+    const boardRows = [];
+    for (let i = 0; i < 3; i++) {
+      const squares = [];
+      for (let  j = 0; j < 3; j++) {
+        squares.push(this.renderSquare(i * 3 + j));
+      }
+      boardRows.push(<div className="board-row" key={i}>{squares}</div>);
+    }
+
+    return boardRows;
   }
 }
 
@@ -86,7 +80,6 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
-
     const moves = history.map((step, move) => {
       const desc = move ?
       'Go to move #' + move :
